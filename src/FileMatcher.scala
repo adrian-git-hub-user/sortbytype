@@ -4,26 +4,29 @@
 
 object FileMatcher {
   
-  private def filesHere = (new java.io.File("d:\\downloads")).listFiles()
+  private def filesHere : Array[java.io.File] = (new java.io.File("d:\\downloads")).listFiles()
   
   /**
    * filesMatching takes a function argument called matcher.
    * The function matcher takes a String parameter and returns a boolean
    */
-  private def filesMatching(matcher: (String) => Boolean) = 
-    for(file <- filesHere; if matcher(file.getName))
+  private def filesMatching() = 
+    for(file <- filesHere; if(!file.isDirectory()))
     	yield file
 
-  def filesEnding(query: String) = 
-    filesMatching(_.endsWith(query))
+  def filesEnding() = 
+    filesMatching()
     
     def main(args:Array[String]) {
-     // println("here")
-      val pdfFileArray = filesEnding(".pdf")
-      val dir = new java.io.File("d:\\downloads\\nameoffolder");  
+
+      val dir : java.io.File = new java.io.File("d:\\downloads\\created");  
       dir.mkdir();
       
-      for(fileName <- pdfFileArray){
+      val pdfFileArray : List[java.io.File] = filesEnding().toList
+      
+      val fileNameSet = pdfFileArray.groupBy(_.getName().split('.').last).keys
+      
+      for(fileName <- fileNameSet){
         println(fileName)
       }
     }
